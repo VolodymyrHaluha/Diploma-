@@ -19,12 +19,6 @@ if errorlevel 1 (
   goto :finish
 )
 
-where npm >nul 2>nul
-if errorlevel 1 (
-  echo Помилка: npm не знайдено. Встановіть Node.js та npm.
-  goto :finish
-)
-
 echo Запуск Flask-лаунчера...
 python scripts\server.py
 set EXIT_CODE=%ERRORLEVEL%

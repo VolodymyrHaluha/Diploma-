@@ -10,14 +10,15 @@ import threading
 import webbrowser
 from pathlib import Path
 from shutil import which
+from typing import Sequence
 
 try:
-    from flask import Flask, jsonify, redirect
+    from flask import Flask, Response, jsonify, redirect
 except ModuleNotFoundError:
     Flask = None
     jsonify = None
     redirect = None
-
+    Response = None
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -31,7 +32,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--next-script",
         default="dev",
         choices=("dev", "start"),
-        help="npm script used to run Next.js",
+        help="JavaScript script used to run Next.js",
     )
     parser.add_argument(
         "--no-browser",
@@ -53,8 +54,21 @@ def stop_process(process: subprocess.Popen | None) -> None:
         process.kill()
 
 
+def pick_js_command(script: str) -> Sequence[str] | None:
+    """Find available JS package manager command for the given script."""
+    if which("npm"):
+        return ["npm", "run", script]
+    if which("pnpm"):
+        return ["pnpm", script]
+    if which("yarn"):
+        return ["yarn", script]
+    if which("bun"):
+        return ["bun", "run", script]
+    return None
+
+
 def main() -> int:
-    """Start Next.js process and expose Flask routes."""
+    """Start Flask launcher and (optionally) Next.js process."""
     args = build_parser().parse_args()
 
     if Flask is None:
@@ -68,19 +82,27 @@ def main() -> int:
         print("Помилка: package.json не знайдено в корені проекту.")
         return 1
 
-    if which("npm") is None:
-        print("Помилка: npm не знайдено. Встановіть Node.js та npm.")
-        return 1
+    js_command = pick_js_command(args.next_script)
+    next_process: subprocess.Popen | None = None
+    frontend_mode = "degraded"
 
-    env = os.environ.copy()
-    env["HOSTNAME"] = args.next_host
-    env["PORT"] = str(args.next_port)
+    if js_command is None:
+        print(
+            "Увага: npm/pnpm/yarn/bun не знайдено. Запускаю тільки Flask. "
+            "Frontend Next.js буде недоступний, поки не встановите Node.js."
+        )
+    else:
+        env = os.environ.copy()
+        env["HOSTNAME"] = args.next_host
+        env["PORT"] = str(args.next_port)
 
-    next_command = ["npm", "run", args.next_script]
-    print(f"Запуск Next.js: {' '.join(next_command)} (HOSTNAME={args.next_host}, PORT={args.next_port})")
-
-    next_process = subprocess.Popen(next_command, cwd=project_root, env=env)
-    atexit.register(stop_process, next_process)
+        print(
+            f"Запуск Next.js: {' '.join(js_command)} "
+            f"(HOSTNAME={args.next_host}, PORT={args.next_port})"
+        )
+        next_process = subprocess.Popen(js_command, cwd=project_root, env=env)
+        atexit.register(stop_process, next_process)
+        frontend_mode = "ok"
 
     def _handle_signal(signum: int, _frame: object) -> None:
         print(f"\nОтримано сигнал {signum}. Зупинка сервера...")
@@ -94,16 +116,27 @@ def main() -> int:
 
     @app.get("/")
     def index() -> object:
-        return redirect(f"http://{args.next_host}:{args.next_port}", code=302)
+        if next_process is not None and next_process.poll() is None:
+            return redirect(f"http://{args.next_host}:{args.next_port}", code=302)
+
+        html = (
+            "<h1>ZenithFit Flask Server</h1>"
+            "<p>Flask запущено успішно, але Next.js frontend не стартував.</p>"
+            "<p>Встановіть Node.js (або npm/pnpm/yarn/bun), щоб запускати сайт повністю.</p>"
+            "<p>Після встановлення перезапустіть start_server.bat.</p>"
+        )
+        return Response(html, mimetype="text/html")
 
     @app.get("/health")
     def health() -> object:
+        next_alive = next_process is not None and next_process.poll() is None
         return jsonify(
             {
-                "status": "ok",
+                "status": "ok" if next_alive else "degraded",
+                "frontend_mode": frontend_mode if not next_alive else "ok",
                 "flask": f"http://{args.host}:{args.port}",
                 "next": f"http://{args.next_host}:{args.next_port}",
-                "next_pid": next_process.pid,
+                "next_pid": next_process.pid if next_process else None,
             }
         )
 
