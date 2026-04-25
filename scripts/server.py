@@ -1,8 +1,5 @@
-<<<<<<< HEAD
-=======
 """Flask launcher that starts the Next.js site with sensible defaults."""
 
->>>>>>> 4163118f57961dda3e34b59a76462affe76049ea
 import argparse
 import atexit
 import os
@@ -78,12 +75,8 @@ def main() -> int:
         print("Помилка: Flask не встановлено. Виконайте: pip install flask")
         return 1
 
-<<<<<<< HEAD
-    project_root = Path(__file__).resolve().parent.parent
-=======
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir if (script_dir / "package.json").exists() else script_dir.parent
->>>>>>> 4163118f57961dda3e34b59a76462affe76049ea
 
     package_json = project_root / "package.json"
     if not package_json.exists():
