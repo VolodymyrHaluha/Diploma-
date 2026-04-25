@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-=======
 """Flask launcher that starts the Next.js site with sensible defaults."""
-
->>>>>>> 4163118f57961dda3e34b59a76462affe76049ea
 import argparse
 import atexit
 import os
@@ -59,14 +55,21 @@ def stop_process(process: subprocess.Popen | None) -> None:
 
 def pick_js_command(script: str) -> Sequence[str] | None:
     """Find available JS package manager command for the given script."""
-    if which("npm"):
-        return ["npm", "run", script]
-    if which("pnpm"):
-        return ["pnpm", script]
-    if which("yarn"):
-        return ["yarn", script]
-    if which("bun"):
-        return ["bun", "run", script]
+    npm_bin = which("npm") or which("npm.cmd")
+    if npm_bin:
+        return [npm_bin, "run", script]
+
+    pnpm_bin = which("pnpm") or which("pnpm.cmd")
+    if pnpm_bin:
+        return [pnpm_bin, script]
+
+    yarn_bin = which("yarn") or which("yarn.cmd")
+    if yarn_bin:
+        return [yarn_bin, script]
+
+    bun_bin = which("bun") or which("bun.cmd")
+    if bun_bin:
+        return [bun_bin, "run", script]
     return None
 
 
@@ -78,12 +81,8 @@ def main() -> int:
         print("Помилка: Flask не встановлено. Виконайте: pip install flask")
         return 1
 
-<<<<<<< HEAD
-    project_root = Path(__file__).resolve().parent.parent
-=======
     script_dir = Path(__file__).resolve().parent
     project_root = script_dir if (script_dir / "package.json").exists() else script_dir.parent
->>>>>>> 4163118f57961dda3e34b59a76462affe76049ea
 
     package_json = project_root / "package.json"
     if not package_json.exists():
@@ -108,9 +107,16 @@ def main() -> int:
             f"Запуск Next.js: {' '.join(js_command)} "
             f"(HOSTNAME={args.next_host}, PORT={args.next_port})"
         )
-        next_process = subprocess.Popen(js_command, cwd=project_root, env=env)
-        atexit.register(stop_process, next_process)
-        frontend_mode = "ok"
+        try:
+            next_process = subprocess.Popen(js_command, cwd=project_root, env=env)
+            atexit.register(stop_process, next_process)
+            frontend_mode = "ok"
+        except FileNotFoundError:
+            print(
+                "Увага: не вдалося запустити менеджер пакетів Node.js. "
+                "Запускаю тільки Flask. Перевірте, що npm/pnpm/yarn/bun встановлено "
+                "і доступно у PATH."
+            )
 
     def _handle_signal(signum: int, _frame: object) -> None:
         print(f"\nОтримано сигнал {signum}. Зупинка сервера...")
