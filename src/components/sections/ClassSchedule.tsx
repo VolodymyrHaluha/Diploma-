@@ -19,8 +19,9 @@ export function ClassSchedule() {
   ];
 
   return (
-    <section id="schedule" className="py-24 bg-background">
+    <section id="classes" className="py-24 bg-background">
       <div className="container mx-auto px-4">
+        <div id="schedule" />
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
           <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Weekly <span className="text-primary">Schedule</span></h2>
           <p className="text-muted-foreground">Find the perfect class that fits your busy lifestyle. Filter by day and book your spot instantly.</p>

@@ -82,7 +82,7 @@ export function ThreeColumnDashboard() {
   };
 
   return (
-    <section className="py-20 bg-background overflow-hidden">
+    <section id="news" className="py-20 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-3 gap-[5px]">
           
