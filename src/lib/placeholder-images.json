@@ -1,0 +1,52 @@
+{
+  "placeholderImages": [
+    {
+      "id": "hero-bg",
+      "description": "Жінка яка займається спортом у сучасному залі",
+      "imageUrl": "https://picsum.photos/seed/fitness-woman-hero/1920/1080",
+      "imageHint": "woman exercising"
+    },
+    {
+      "id": "trainer-1",
+      "description": "Професійний фітнес-тренер",
+      "imageUrl": "https://picsum.photos/seed/trainer-1-ukr/400/500",
+      "imageHint": "фітнес тренер"
+    },
+    {
+      "id": "trainer-2",
+      "description": "Інструктор з йоги",
+      "imageUrl": "https://picsum.photos/seed/trainer-2-ukr/400/500",
+      "imageHint": "інструктор йоги"
+    },
+    {
+      "id": "trainer-3",
+      "description": "Тренер з бодібілдингу",
+      "imageUrl": "https://picsum.photos/seed/trainer-3-ukr/400/500",
+      "imageHint": "тренер бодібілдинг"
+    },
+    {
+      "id": "equipment-1",
+      "description": "Кардіо зона",
+      "imageUrl": "https://picsum.photos/seed/eq-1-ukr/600/400",
+      "imageHint": "бігова доріжка"
+    },
+    {
+      "id": "equipment-2",
+      "description": "Зона вільних ваг",
+      "imageUrl": "https://picsum.photos/seed/eq-2-ukr/600/400",
+      "imageHint": "силові тренажери"
+    },
+    {
+      "id": "equipment-3",
+      "description": "Сайкл студія",
+      "imageUrl": "https://picsum.photos/seed/eq-3-ukr/600/400",
+      "imageHint": "велотренажери"
+    },
+    {
+      "id": "equipment-4",
+      "description": "Басейн та спа",
+      "imageUrl": "https://picsum.photos/seed/eq-4-ukr/600/400",
+      "imageHint": "басейн спорт"
+    }
+  ]
+}

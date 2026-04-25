@@ -1,0 +1,99 @@
+
+"use client"
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { usePathname } from 'next/navigation';
+
+export function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const navLinks = [
+    { name: 'Головна', href: '/' },
+    { name: 'Про нас', href: '/about' },
+    { name: 'Абонементи', href: '/membership' },
+    { name: 'Класи', href: '/classes' },
+    { name: 'Контакти', href: '/contact' },
+  ];
+
+  return (
+    <header 
+      className={cn(
+        "fixed top-0 w-full z-50 transition-all duration-300",
+        isScrolled || pathname !== '/' ? "bg-background/80 backdrop-blur-md border-b py-3" : "bg-transparent py-5"
+      )}
+    >
+      <div className="container mx-auto px-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">Z</div>
+          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">ZenithFit</span>
+        </Link>
+
+        {/* Desktop Nav */}
+        <nav className="hidden md:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link 
+              key={link.name} 
+              href={link.href}
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                pathname === link.href ? "text-primary" : "text-foreground/80"
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+          <Button variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
+            Приєднатися
+          </Button>
+        </nav>
+
+        {/* Mobile Toggle */}
+        <button 
+          className="md:hidden text-foreground"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+      {/* Mobile Menu */}
+      <div 
+        className={cn(
+          "fixed inset-0 top-[60px] bg-background z-40 md:hidden transition-transform duration-300 flex flex-col items-center justify-center gap-8 p-10",
+          mobileMenuOpen ? "translate-x-0" : "translate-x-full"
+        )}
+      >
+        {navLinks.map((link) => (
+          <Link 
+            key={link.name} 
+            href={link.href}
+            onClick={() => setMobileMenuOpen(false)}
+            className={cn(
+              "text-2xl font-headline font-bold hover:text-primary",
+              pathname === link.href ? "text-primary" : "text-foreground"
+            )}
+          >
+            {link.name}
+          </Link>
+        ))}
+        <Button size="lg" className="w-full bg-primary text-background font-bold">
+          Приєднатися
+        </Button>
+      </div>
+    </header>
+  );
+}
