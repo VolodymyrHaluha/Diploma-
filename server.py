@@ -1,38 +1,25 @@
-"""Flask launcher that starts the Next.js site with sensible defaults."""
+"""Flask-only launcher for ZenithFit."""
+
 import argparse
-import atexit
 import os
 import signal
-import subprocess
 import sys
 import threading
 import webbrowser
-from pathlib import Path
-from shutil import which
-from typing import Sequence
 
 try:
-    from flask import Flask, Response, jsonify, redirect
+    from flask import Flask, Response, jsonify
 except ModuleNotFoundError:
     Flask = None
     jsonify = None
-    redirect = None
     Response = None
 
 
 def build_parser() -> argparse.ArgumentParser:
-    """CLI options for Flask and Next.js launch parameters."""
-    parser = argparse.ArgumentParser(description="Run ZenithFit through Flask + Next.js")
+    """CLI options for Flask launch parameters."""
+    parser = argparse.ArgumentParser(description="Run ZenithFit in Flask-only mode")
     parser.add_argument("--host", default="127.0.0.1", help="Flask host")
     parser.add_argument("--port", type=int, default=5000, help="Flask port")
-    parser.add_argument("--next-host", default="127.0.0.1", help="Next.js host")
-    parser.add_argument("--next-port", type=int, default=3000, help="Next.js port")
-    parser.add_argument(
-        "--next-script",
-        default="dev",
-        choices=("dev", "start"),
-        help="JavaScript script used to run Next.js",
-    )
     parser.add_argument(
         "--no-browser",
         action="store_true",
@@ -41,86 +28,19 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def stop_process(process: subprocess.Popen | None) -> None:
-    """Terminate child process if still running."""
-    if process is None or process.poll() is not None:
-        return
-
-    process.terminate()
-    try:
-        process.wait(timeout=8)
-    except subprocess.TimeoutExpired:
-        process.kill()
-
-
-def pick_js_command(script: str) -> Sequence[str] | None:
-    """Find available JS package manager command for the given script."""
-    npm_bin = which("npm") or which("npm.cmd")
-    if npm_bin:
-        return [npm_bin, "run", script]
-
-    pnpm_bin = which("pnpm") or which("pnpm.cmd")
-    if pnpm_bin:
-        return [pnpm_bin, script]
-
-    yarn_bin = which("yarn") or which("yarn.cmd")
-    if yarn_bin:
-        return [yarn_bin, script]
-
-    bun_bin = which("bun") or which("bun.cmd")
-    if bun_bin:
-        return [bun_bin, "run", script]
-    return None
-
-
 def main() -> int:
-    """Start Flask launcher and (optionally) Next.js process."""
+    """Start Flask-only launcher."""
     args = build_parser().parse_args()
 
     if Flask is None:
         print("Помилка: Flask не встановлено. Виконайте: pip install flask")
         return 1
 
-    script_dir = Path(__file__).resolve().parent
-    project_root = script_dir if (script_dir / "package.json").exists() else script_dir.parent
-
-    package_json = project_root / "package.json"
-    if not package_json.exists():
-        print("Помилка: package.json не знайдено в корені проекту.")
-        return 1
-
-    js_command = pick_js_command(args.next_script)
-    next_process: subprocess.Popen | None = None
-    frontend_mode = "degraded"
-
-    if js_command is None:
-        print(
-            "Увага: npm/pnpm/yarn/bun не знайдено. Запускаю тільки Flask. "
-            "Frontend Next.js буде недоступний, поки не встановите Node.js."
-        )
-    else:
-        env = os.environ.copy()
-        env["HOSTNAME"] = args.next_host
-        env["PORT"] = str(args.next_port)
-
-        print(
-            f"Запуск Next.js: {' '.join(js_command)} "
-            f"(HOSTNAME={args.next_host}, PORT={args.next_port})"
-        )
-        try:
-            next_process = subprocess.Popen(js_command, cwd=project_root, env=env)
-            atexit.register(stop_process, next_process)
-            frontend_mode = "ok"
-        except FileNotFoundError:
-            print(
-                "Увага: не вдалося запустити менеджер пакетів Node.js. "
-                "Запускаю тільки Flask. Перевірте, що npm/pnpm/yarn/bun встановлено "
-                "і доступно у PATH."
-            )
+    os.environ["ZENITHFIT_MODE"] = "flask-only"
+    print("Режим запуску: Flask-only (Next.js вимкнено).")
 
     def _handle_signal(signum: int, _frame: object) -> None:
         print(f"\nОтримано сигнал {signum}. Зупинка сервера...")
-        stop_process(next_process)
         raise SystemExit(0)
 
     signal.signal(signal.SIGINT, _handle_signal)
@@ -130,27 +50,22 @@ def main() -> int:
 
     @app.get("/")
     def index() -> object:
-        if next_process is not None and next_process.poll() is None:
-            return redirect(f"http://{args.next_host}:{args.next_port}", code=302)
-
         html = (
             "<h1>ZenithFit Flask Server</h1>"
-            "<p>Flask запущено успішно, але Next.js frontend не стартував.</p>"
-            "<p>Встановіть Node.js (або npm/pnpm/yarn/bun), щоб запускати сайт повністю.</p>"
-            "<p>Після встановлення перезапустіть start_server.bat.</p>"
+            "<p>Flask запущено успішно.</p>"
+            "<p>Проєкт працює у режимі Flask-only (без Next.js).</p>"
         )
         return Response(html, mimetype="text/html")
 
     @app.get("/health")
     def health() -> object:
-        next_alive = next_process is not None and next_process.poll() is None
         return jsonify(
             {
-                "status": "ok" if next_alive else "degraded",
-                "frontend_mode": frontend_mode if not next_alive else "ok",
+                "status": "ok",
+                "frontend_mode": "disabled",
                 "flask": f"http://{args.host}:{args.port}",
-                "next": f"http://{args.next_host}:{args.next_port}",
-                "next_pid": next_process.pid if next_process else None,
+                "next": None,
+                "next_pid": None,
             }
         )
 
@@ -160,7 +75,6 @@ def main() -> int:
     print(f"Flask запущено на http://{args.host}:{args.port}")
     app.run(host=args.host, port=args.port, debug=False)
 
-    stop_process(next_process)
     return 0
 
 
