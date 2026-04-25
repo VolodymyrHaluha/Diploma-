@@ -9,18 +9,39 @@ echo   ZenithFit: Flask-only запуск
 echo ========================================
 
 if not exist package.json (
-  echo Помилка: package.json не знайдено. Запускайте файл з кореня проекту.
+  echo Помилка: package.json не знайдено.
+  echo Запускайте цей файл з кореня Node.js проекту.
   goto :finish
 )
 
-where python >nul 2>nul
+where node >nul 2>nul
 if errorlevel 1 (
-  echo Помилка: Python не знайдено у PATH.
+  echo Помилка: Node.js не знайдено у PATH.
+  echo Встановіть Node.js: https://nodejs.org/
   goto :finish
 )
 
-echo Запуск Flask-лаунчера...
-python scripts\server.py
+where npm >nul 2>nul
+if errorlevel 1 (
+  echo Помилка: npm не знайдено у PATH.
+  echo Перевстановіть Node.js або перевірте PATH.
+  goto :finish
+)
+
+if "%HOSTNAME%"=="" set HOSTNAME=127.0.0.1
+if "%PORT%"=="" set PORT=3000
+
+if not exist node_modules (
+  echo Залежності не знайдено. Виконую npm install...
+  call npm install
+  if errorlevel 1 (
+    echo Помилка під час npm install.
+    goto :finish
+  )
+)
+
+echo Запуск Next.js: npm run dev (HOSTNAME=%HOSTNAME%, PORT=%PORT%)
+call npm run dev
 set EXIT_CODE=%ERRORLEVEL%
 
 if not "%EXIT_CODE%"=="0" (
@@ -31,7 +52,7 @@ if not "%EXIT_CODE%"=="0" (
 goto :pause
 
 :finish
-set EXIT_CODE=1
+if "%EXIT_CODE%"=="" set EXIT_CODE=1
 
 :pause
 echo.
