@@ -19,8 +19,17 @@ if errorlevel 1 (
   goto :finish
 )
 
-echo Запуск Flask-лаунчера...
-python scripts\server.py
+set SERVER_ENTRY=
+if exist scripts\server.py set SERVER_ENTRY=scripts\server.py
+if exist server.py set SERVER_ENTRY=server.py
+
+if "%SERVER_ENTRY%"=="" (
+  echo Помилка: не знайдено server.py або scripts\server.py.
+  goto :finish
+)
+
+echo Запуск Flask-лаунчера через %SERVER_ENTRY%...
+python %SERVER_ENTRY%
 set EXIT_CODE=%ERRORLEVEL%
 
 if not "%EXIT_CODE%"=="0" (
