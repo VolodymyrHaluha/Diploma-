@@ -22,11 +22,13 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Головна', href: '/' },
-    { name: 'Про нас', href: '/about' },
-    { name: 'Абонементи', href: '/membership' },
-    { name: 'Класи', href: '/classes' },
-    { name: 'Контакти', href: '/contact' },
+    { name: 'Home', href: '/' },
+    { name: 'Membership', href: '/membership' },
+    { name: 'Classes', href: '/classes' },
+    { name: 'Trainers', href: '/trainers' },
+    { name: 'Schedule', href: '/schedule' },
+    { name: 'News', href: '/news' },
+    { name: 'Contact', href: '/contact' },
   ];
 
   return (
@@ -38,8 +40,8 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">Z</div>
-          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">ZenithFit</span>
+          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">F</div>
+          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">Fitness Club</span>
         </Link>
 
         {/* Desktop Nav */}
@@ -57,7 +59,7 @@ export function Navbar() {
             </Link>
           ))}
           <Button variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
-            Приєднатися
+            Join Now
           </Button>
         </nav>
 
@@ -82,16 +84,13 @@ export function Navbar() {
             key={link.name} 
             href={link.href}
             onClick={() => setMobileMenuOpen(false)}
-            className={cn(
-              "text-2xl font-headline font-bold hover:text-primary",
-              pathname === link.href ? "text-primary" : "text-foreground"
-            )}
+            className="text-2xl font-headline font-bold hover:text-primary text-foreground"
           >
             {link.name}
           </Link>
         ))}
         <Button size="lg" className="w-full bg-primary text-background font-bold">
-          Приєднатися
+          Join Now
         </Button>
       </div>
     </header>

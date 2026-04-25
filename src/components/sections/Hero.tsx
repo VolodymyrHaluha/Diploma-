@@ -53,31 +53,30 @@ export function Hero() {
         <div className="space-y-8 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            НОВИЙ ПРЕМІУМ ЗАЛ ВІДКРИТО
+            PREMIUM PERFORMANCE CLUB
           </div>
           <h1 className="text-5xl md:text-7xl font-headline font-bold leading-tight">
-            Трансформуй своє <span className="text-primary italic">тіло</span>, <br />
-            Трансформуй своє <span className="text-secondary italic">життя</span>
+            Transform Your Body, <br />
+            <span className="text-primary italic">Transform Your Life</span>
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed font-body">
-            Відчуйте вершину фітнесу в ZenithFit. Наші програми, 
-            тренери світового класу та сучасне обладнання допоможуть вам вийти за межі можливого.
+            Premium training programs, professional coaches, modern equipment.
           </p>
           <div className="flex flex-wrap gap-4">
             <Button size="lg" className="bg-primary text-background font-bold px-8 py-6 text-lg hover:scale-105 transition-transform">
-              Стати учасником
+              Start Membership
             </Button>
             <Button size="lg" variant="outline" className="border-foreground text-foreground font-bold px-8 py-6 text-lg hover:bg-foreground hover:text-background transition-colors">
-              Переглянути розклад
+              View Schedule
             </Button>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8">
             {[
-              { label: 'Учасників', value: 1500, suffix: '+' },
-              { label: 'Тренерів', value: 30, suffix: '' },
-              { label: 'Тренажерів', value: 50, suffix: '+' },
-              { label: 'Класи/міс', value: 100, suffix: '' },
+              { label: 'Members', value: 1500, suffix: '+' },
+              { label: 'Trainers', value: 30, suffix: '' },
+              { label: 'Machines', value: 50, suffix: '+' },
+              { label: 'Classes Monthly', value: 100, suffix: '' },
             ].map((stat) => (
               <div key={stat.label} className="space-y-1">
                 <div className="text-3xl font-headline font-bold text-primary">
