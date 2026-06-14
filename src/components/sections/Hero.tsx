@@ -1,8 +1,8 @@
-
 "use client"
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
@@ -35,11 +35,10 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-      {/* Background with overlay */}
       <div className="absolute inset-0 z-0">
         <Image 
           src={heroImage?.imageUrl || ""} 
-          alt="ZenithFit Interior" 
+          alt="Інтерʼєр фітнес-клубу ZenithFit" 
           fill 
           className="object-cover"
           priority
@@ -53,30 +52,30 @@ export function Hero() {
         <div className="space-y-8 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-bold uppercase tracking-widest">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            PREMIUM PERFORMANCE CLUB
+            Преміальний клуб результату
           </div>
           <h1 className="text-5xl md:text-7xl font-headline font-bold leading-tight">
-            Transform Your Body, <br />
-            <span className="text-primary italic">Transform Your Life</span>
+            Зміни своє тіло, <br />
+            <span className="text-primary italic">зміни своє життя</span>
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed font-body">
-            Premium training programs, professional coaches, modern equipment.
+            Преміальні тренувальні програми, професійні тренери та сучасне обладнання для вашого прогресу.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Button size="lg" className="bg-primary text-background font-bold px-8 py-6 text-lg hover:scale-105 transition-transform">
-              Start Membership
+            <Button asChild size="lg" className="bg-primary text-background font-bold px-8 py-6 text-lg hover:scale-105 transition-transform">
+              <Link href="/membership">Оформити абонемент</Link>
             </Button>
-            <Button size="lg" variant="outline" className="border-foreground text-foreground font-bold px-8 py-6 text-lg hover:bg-foreground hover:text-background transition-colors">
-              View Schedule
+            <Button asChild size="lg" variant="outline" className="border-foreground text-foreground font-bold px-8 py-6 text-lg hover:bg-foreground hover:text-background transition-colors">
+              <Link href="/schedule">Переглянути розклад</Link>
             </Button>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8">
             {[
-              { label: 'Members', value: 1500, suffix: '+' },
-              { label: 'Trainers', value: 30, suffix: '' },
-              { label: 'Machines', value: 50, suffix: '+' },
-              { label: 'Classes Monthly', value: 100, suffix: '' },
+              { label: 'Учасників', value: 1500, suffix: '+' },
+              { label: 'Тренерів', value: 30, suffix: '' },
+              { label: 'Тренажерів', value: 50, suffix: '+' },
+              { label: 'Занять щомісяця', value: 100, suffix: '' },
             ].map((stat) => (
               <div key={stat.label} className="space-y-1">
                 <div className="text-3xl font-headline font-bold text-primary">
