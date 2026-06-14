@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { UserAvatarIcon } from '@/components/auth/UserAvatarIcon';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -56,9 +59,17 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Button asChild variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
-            <Link href="/login">Увійти</Link>
-          </Button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link href="/profile" className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-3 transition-colors hover:border-primary/50 hover:text-primary">
+                <UserAvatarIcon avatar={user.photo_url} className="h-9 w-9" />
+                <span className="text-sm font-bold">{user.username}</span>
+              </Link>
+              <Button type="button" variant="outline" className="border-white/10 bg-white/5" onClick={logout}>
+                Вийти
+              </Button>
+            </div>
+          ) : null}
         </nav>
 
         <button 
@@ -86,9 +97,17 @@ export function Navbar() {
             {link.name}
           </Link>
         ))}
-        <Button asChild size="lg" className="w-full bg-primary text-background font-bold">
-          <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Увійти</Link>
-        </Button>
+        {user ? (
+          <>
+            <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 text-xl font-headline font-bold hover:text-primary">
+              <UserAvatarIcon avatar={user.photo_url} className="h-12 w-12" />
+              {user.username}
+            </Link>
+            <Button type="button" size="lg" variant="outline" className="w-full border-white/10 bg-white/5" onClick={() => { setMobileMenuOpen(false); logout(); }}>
+              Вийти
+            </Button>
+          </>
+        ) : null}
       </div>
     </header>
   );
