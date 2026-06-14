@@ -7,27 +7,9 @@ import { Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export function Trainers() {
   const trainers = [
-    { 
-      id: 'trainer-1', 
-      name: 'Marcus Thorne', 
-      specialty: 'Strength & Conditioning', 
-      experience: '12 Years',
-      socials: true 
-    },
-    { 
-      id: 'trainer-2', 
-      name: 'Elena Vance', 
-      specialty: 'Yoga & Pilates', 
-      experience: '8 Years',
-      socials: true 
-    },
-    { 
-      id: 'trainer-3', 
-      name: 'David Beck', 
-      specialty: 'Bodybuilding Specialist', 
-      experience: '15 Years',
-      socials: true 
-    },
+    { id: 'trainer-1', name: 'Маркус Торн', specialty: 'Силова підготовка', experience: '12 років' },
+    { id: 'trainer-2', name: 'Олена Венс', specialty: 'Йога та пілатес', experience: '8 років' },
+    { id: 'trainer-3', name: 'Девід Бек', specialty: 'Бодибілдинг', experience: '15 років' },
   ];
 
   return (
@@ -35,10 +17,10 @@ export function Trainers() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
           <div className="max-w-xl space-y-4">
-            <h2 className="text-4xl md:text-5xl font-headline font-bold">Expert <span className="text-secondary">Trainers</span></h2>
-            <p className="text-muted-foreground">Work with the best in the industry. Our trainers are certified professionals dedicated to your success.</p>
+            <h2 className="text-4xl md:text-5xl font-headline font-bold">Професійні <span className="text-secondary">тренери</span></h2>
+            <p className="text-muted-foreground">Працюйте з найкращими фахівцями індустрії. Наші тренери сертифіковані та зосереджені на вашому результаті.</p>
           </div>
-          <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-background">View All Experts</Button>
+          <Button variant="outline" className="border-secondary text-secondary hover:bg-secondary hover:text-background">Переглянути всіх</Button>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -64,9 +46,9 @@ export function Trainers() {
                 <CardContent className="p-6 text-center space-y-2">
                   <h3 className="text-xl font-headline font-bold text-foreground">{trainer.name}</h3>
                   <p className="text-primary text-sm font-medium uppercase tracking-wider">{trainer.specialty}</p>
-                  <div className="text-xs text-muted-foreground mt-4 pb-4">Experience: {trainer.experience}</div>
+                  <div className="text-xs text-muted-foreground mt-4 pb-4">Досвід: {trainer.experience}</div>
                   <Button className="w-full bg-transparent border border-white/10 hover:border-secondary hover:text-secondary hover:bg-transparent">
-                    Book Training
+                    Записатися на тренування
                   </Button>
                 </CardContent>
               </Card>

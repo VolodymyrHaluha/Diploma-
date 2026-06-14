@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -7,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { UserAvatarIcon } from '@/components/auth/UserAvatarIcon';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const pathname = usePathname();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,13 +24,13 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Membership', href: '/membership' },
-    { name: 'Classes', href: '/classes' },
-    { name: 'Trainers', href: '/trainers' },
-    { name: 'Schedule', href: '/schedule' },
-    { name: 'News', href: '/news' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Головна', href: '/' },
+    { name: 'Абонементи', href: '/membership' },
+    { name: 'Заняття', href: '/classes' },
+    { name: 'Тренери', href: '/trainers' },
+    { name: 'Розклад', href: '/schedule' },
+    { name: 'Новини', href: '/news' },
+    { name: 'Контакти', href: '/contact' },
   ];
 
   return (
@@ -40,11 +42,10 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">F</div>
-          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">Fitness Club</span>
+          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">Z</div>
+          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">ZenithFit</span>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link 
@@ -58,21 +59,28 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Button variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
-            Join Now
-          </Button>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <Link href="/profile" className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 py-1 pl-1 pr-3 transition-colors hover:border-primary/50 hover:text-primary">
+                <UserAvatarIcon avatar={user.photo_url} className="h-9 w-9" />
+                <span className="text-sm font-bold">{user.username}</span>
+              </Link>
+              <Button type="button" variant="outline" className="border-white/10 bg-white/5" onClick={logout}>
+                Вийти
+              </Button>
+            </div>
+          ) : null}
         </nav>
 
-        {/* Mobile Toggle */}
         <button 
           className="md:hidden text-foreground"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Відкрити меню"
         >
           {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div 
         className={cn(
           "fixed inset-0 top-[60px] bg-background z-40 md:hidden transition-transform duration-300 flex flex-col items-center justify-center gap-8 p-10",
@@ -89,9 +97,17 @@ export function Navbar() {
             {link.name}
           </Link>
         ))}
-        <Button size="lg" className="w-full bg-primary text-background font-bold">
-          Join Now
-        </Button>
+        {user ? (
+          <>
+            <Link href="/profile" onClick={() => setMobileMenuOpen(false)} className="flex items-center gap-3 text-xl font-headline font-bold hover:text-primary">
+              <UserAvatarIcon avatar={user.photo_url} className="h-12 w-12" />
+              {user.username}
+            </Link>
+            <Button type="button" size="lg" variant="outline" className="w-full border-white/10 bg-white/5" onClick={() => { setMobileMenuOpen(false); logout(); }}>
+              Вийти
+            </Button>
+          </>
+        ) : null}
       </div>
     </header>
   );
