@@ -140,17 +140,11 @@ CREATE TABLE users (
     username VARCHAR(80) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role VARCHAR(20) NOT NULL DEFAULT 'editor',
-    photo_url VARCHAR(500),
-    full_name TEXT,
-    weight INTEGER,
-    height INTEGER,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_users_username UNIQUE (username),
-    CONSTRAINT chk_users_role CHECK (role IN ('admin', 'editor', 'trainer')),
-    CONSTRAINT chk_users_weight CHECK (weight IS NULL OR weight > 0),
-    CONSTRAINT chk_users_height CHECK (height IS NULL OR height > 0)
+    CONSTRAINT chk_users_role CHECK (role IN ('admin', 'editor', 'trainer'))
 );
 
 CREATE TABLE news_posts (
@@ -241,8 +235,8 @@ INSERT INTO class_sessions (trainer_id, title, day_of_week, start_time, capacity
 (4, 'Body Pump', 'Monday', '16:00:00', 22),
 (5, 'Boxing Basics', 'Monday', '18:00:00', 14);
 
-INSERT INTO users (username, password_hash, role, photo_url, full_name, weight, height) VALUES
-('admin', '$2y$10$replace_with_real_password_hash_before_production', 'admin', 'dumbbell', 'Адміністратор ZenithFit', 80, 180);
+INSERT INTO users (username, password_hash, role) VALUES
+('admin', '$2y$10$replace_with_real_password_hash_before_production', 'admin');
 
 INSERT INTO news_posts (author_id, title, tag, content) VALUES
 (1, 'Ласкаво просимо до ZenithFit', 'Клуб', 'Слідкуйте за сторінкою новин, щоб дізнаватися про оновлення клубу, заняття та абонементи.');
