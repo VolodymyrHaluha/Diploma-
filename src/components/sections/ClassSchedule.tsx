@@ -1,45 +1,132 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { ClassSession } from '@/lib/training-types';
 
-export function ClassSchedule() {
-  const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'Пʼятниця', 'Субота', 'Неділя'];
-  const [activeDay, setActiveDay] = useState('Понеділок');
+const days = [
+  { label: 'Понеділок', value: 'Monday' },
+  { label: 'Вівторок', value: 'Tuesday' },
+  { label: 'Середа', value: 'Wednesday' },
+  { label: 'Четвер', value: 'Thursday' },
+  { label: 'Пʼятниця', value: 'Friday' },
+  { label: 'Субота', value: 'Saturday' },
+  { label: 'Неділя', value: 'Sunday' },
+];
 
-  const classes = [
-    { time: '07:00', name: 'Power Yoga', instructor: 'Олена Венс', intensity: 'Середня', room: 'Zen Studio' },
-    { time: '09:00', name: 'HIIT Circuit', instructor: 'Маркус Торн', intensity: 'Висока', room: 'Головний зал' },
-    { time: '11:00', name: 'Spin Mastery', instructor: 'Девід Бек', intensity: 'Висока', room: 'Cycle Lab' },
-    { time: '16:00', name: 'Body Pump', instructor: 'Сара Дж.', intensity: 'Середня', room: 'Студія 1' },
-    { time: '18:00', name: 'Boxing Basics', instructor: 'Тайсон Р.', intensity: 'Екстремальна', room: 'Combat Zone' },
-  ];
+type ClassesResponse = {
+  classes?: ClassSession[];
+  message?: string;
+};
+
+type ClassScheduleProps = {
+  initialClasses?: ClassSession[];
+  initialDay?: string;
+};
+
+const emptyClassSessions: ClassSession[] = [];
+
+export function ClassSchedule({ initialClasses = emptyClassSessions, initialDay = 'Monday' }: ClassScheduleProps) {
+  const [activeDay, setActiveDay] = useState(initialDay);
+  const [classes, setClasses] = useState<ClassSession[]>(initialClasses);
+  const [message, setMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [enrollingId, setEnrollingId] = useState<number | null>(null);
+
+  useEffect(() => {
+    let isActive = true;
+    const canUseInitialClasses = activeDay === initialDay && initialClasses.length > 0;
+    setIsLoading(!canUseInitialClasses);
+    setMessage('');
+
+    if (canUseInitialClasses) {
+      setClasses(initialClasses);
+      setIsLoading(false);
+      return () => {
+        isActive = false;
+      };
+    }
+
+    fetch(`/api/classes?day=${encodeURIComponent(activeDay)}`, { cache: 'no-store' })
+      .then(async (response) => {
+        const data = await response.json().catch(() => ({})) as ClassesResponse;
+
+        if (!response.ok) {
+          throw new Error(data.message ?? 'Не вдалося завантажити заняття.');
+        }
+
+        return data.classes ?? [];
+      })
+      .then((items) => {
+        if (isActive) setClasses(items);
+      })
+      .catch((error) => {
+        if (!isActive) return;
+        setClasses([]);
+        setMessage(error instanceof Error ? error.message : 'Не вдалося завантажити заняття.');
+      })
+      .finally(() => {
+        if (isActive) setIsLoading(false);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, [activeDay, initialClasses, initialDay]);
+
+  const handleEnroll = async (classSessionId: number) => {
+    setMessage('');
+    setEnrollingId(classSessionId);
+
+    try {
+      const response = await fetch('/api/classes/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ class_session_id: classSessionId }),
+      });
+      const data = await response.json().catch(() => ({})) as { message?: string };
+
+      if (!response.ok) {
+        throw new Error(data.message ?? 'Не вдалося записатися.');
+      }
+
+      setMessage('Запис додано в історію тренувань профілю.');
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : 'Не вдалося записатися.');
+    } finally {
+      setEnrollingId(null);
+    }
+  };
 
   return (
     <section id="classes" className="py-24 bg-background">
       <div className="container mx-auto px-4">
         <div id="schedule" />
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Тижневий <span className="text-primary">розклад</span></h2>
-          <p className="text-muted-foreground">Знайдіть заняття під свій ритм життя. Оберіть день і забронюйте місце в групі.</p>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">
+            Тижневий <span className="text-primary">розклад</span>
+          </h2>
+          <p className="text-muted-foreground">
+            Знайдіть заняття під свій ритм життя. Оберіть день і забронюйте місце в групі.
+          </p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-10">
           {days.map((day) => (
             <button
-              key={day}
-              onClick={() => setActiveDay(day)}
+              key={day.value}
+              onClick={() => setActiveDay(day.value)}
               className={cn(
-                "px-6 py-2 rounded-full text-sm font-bold transition-all border",
-                activeDay === day 
-                  ? "bg-primary text-background border-primary" 
-                  : "bg-white/5 text-muted-foreground border-white/10 hover:border-primary/50"
+                'px-6 py-2 rounded-full text-sm font-bold transition-all border',
+                activeDay === day.value
+                  ? 'bg-primary text-background border-primary'
+                  : 'bg-white/5 text-muted-foreground border-white/10 hover:border-primary/50'
               )}
             >
-              {day}
+              {day.label}
             </button>
           ))}
         </div>
@@ -56,33 +143,50 @@ export function ClassSchedule() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {classes.map((cls, idx) => (
-                <TableRow key={idx} className="border-b-white/5 hover:bg-white/5 transition-colors">
-                  <TableCell className="font-medium text-primary">{cls.time}</TableCell>
-                  <TableCell>
-                    <div className="font-bold">{cls.name}</div>
-                    <div className="text-xs text-muted-foreground">{cls.room}</div>
-                  </TableCell>
-                  <TableCell>{cls.instructor}</TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant="outline" 
-                      className={cn(
-                        "text-[10px] uppercase",
-                        cls.intensity === 'Висока' || cls.intensity === 'Екстремальна' ? "border-red-500/50 text-red-500" : "border-secondary/50 text-secondary"
-                      )}
-                    >
-                      {cls.intensity}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button size="sm" className="bg-secondary text-background hover:bg-secondary/90 font-bold">Записатися</Button>
+              {isLoading ? (
+                <TableRow className="border-b-white/5">
+                  <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                    Завантажуємо заняття...
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : classes.length ? (
+                classes.map((cls) => (
+                  <TableRow key={cls.id} className="border-b-white/5 hover:bg-white/5 transition-colors">
+                    <TableCell className="font-medium text-primary">{cls.start_time}</TableCell>
+                    <TableCell>
+                      <div className="font-bold">{cls.title}</div>
+                      <div className="text-xs text-muted-foreground">{cls.capacity} місць</div>
+                    </TableCell>
+                    <TableCell>{cls.trainer_name}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-[10px] uppercase border-secondary/50 text-secondary">
+                        {cls.specialty}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button
+                        size="sm"
+                        className="bg-secondary text-background hover:bg-secondary/90 font-bold"
+                        disabled={enrollingId === cls.id}
+                        onClick={() => handleEnroll(cls.id)}
+                      >
+                        {enrollingId === cls.id ? 'Записуємо...' : 'Записатися'}
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow className="border-b-white/5">
+                  <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
+                    На цей день занять немає.
+                  </TableCell>
+                </TableRow>
+              )}
             </TableBody>
           </Table>
         </div>
+
+        {message ? <p className="mt-4 text-center text-sm text-secondary">{message}</p> : null}
       </div>
     </section>
   );

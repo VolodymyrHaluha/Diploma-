@@ -13,7 +13,7 @@ function getPgConfig(): PoolConfig {
     port: Number(process.env.PGPORT ?? 5432),
     database: process.env.PGDATABASE ?? 'ZenithFit',
     user: process.env.PGUSER ?? 'postgres',
-    password: process.env.PGPASSWORD ?? '12345',
+    password: process.env.PGPASSWORD ?? 'admin',
   };
 }
 
@@ -23,7 +23,7 @@ function getMaintenancePgConfig(): PoolConfig {
     port: Number(process.env.PGPORT ?? 5432),
     database: process.env.PGMAINTENANCE_DATABASE ?? 'postgres',
     user: process.env.PGUSER ?? 'postgres',
-    password: process.env.PGPASSWORD ?? '12345',
+    password: process.env.PGPASSWORD ?? 'admin',
   };
 }
 

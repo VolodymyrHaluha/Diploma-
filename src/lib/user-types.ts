@@ -1,4 +1,4 @@
-export type UserAvatar = 'dumbbell' | 'bottle';
+export type UserAvatar = 'dumbbell' | 'bottle' | (string & {});
 
 export type UserRole = 'admin' | 'editor' | 'trainer';
 
@@ -7,7 +7,7 @@ export type StoredUser = {
   username: string;
   password_hash: string;
   role: UserRole;
-  photo_url: UserAvatar;
+  photo_url: string;
   full_name: string;
   weight: number | null;
   height: number | null;

@@ -39,6 +39,7 @@ set "PGDATABASE=ZenithFit"
 set "PGMAINTENANCE_DATABASE=postgres"
 set "PGUSER=postgres"
 set "PGPASSWORD=admin"
+set "PGCLIENTENCODING=UTF8"
 
 echo App mode: %APP_MODE%
 echo App address: %APP_HOST%:%APP_PORT%
@@ -51,15 +52,17 @@ if not exist node_modules (
 )
 
 echo Checking PostgreSQL connection...
-node -e "const {Pool}=require('pg');const pool=new Pool({host:process.env.PGHOST,port:Number(process.env.PGPORT),database:process.env.PGMAINTENANCE_DATABASE,user:process.env.PGUSER,password:process.env.PGPASSWORD,connectionTimeoutMillis:3000});pool.query('select 1').then(()=>pool.end()).then(()=>process.exit(0)).catch(e=>{console.error('PostgreSQL check failed: '+(e.code||'')+' '+e.message);process.exit(1);});"
+node -e "const {Pool}=require('pg');const pool=new Pool({host:process.env.PGHOST,port:Number(process.env.PGPORT),database:process.env.PGMAINTENANCE_DATABASE,user:process.env.PGUSER,password:process.env.PGPASSWORD,connectionTimeoutMillis:3000});pool.query('select 1').then(()=>pool.end()).then(()=>process.exit(0)).catch(e=>{const code=e.code||'';let message=e.message;if(code==='28P01')message='Wrong PostgreSQL password. Update PGPASSWORD in start_server.bat.';if(code==='ECONNREFUSED')message='PostgreSQL is not running or localhost:5432 is unavailable.';console.error('PostgreSQL check failed: '+code+' '+message);process.exit(1);});"
 if errorlevel 1 goto :finish
 
 call :free_port
 if errorlevel 1 goto :finish
 
-echo Running production build...
-call npm run build
-if errorlevel 1 goto :finish
+if not exist .next\BUILD_ID (
+  echo Production build was not found.
+  echo Run npm run build once before starting the production server.
+  goto :finish
+)
 
 if exist .next\routes-manifest.json (
   node -e "const fs=require('fs');const p='.next/routes-manifest.json';const m=JSON.parse(fs.readFileSync(p,'utf8'));if(!Array.isArray(m.dataRoutes))m.dataRoutes=[];fs.writeFileSync(p,JSON.stringify(m));"

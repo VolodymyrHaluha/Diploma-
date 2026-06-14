@@ -11,7 +11,7 @@ import {
 } from '@/lib/auth-storage';
 
 type ProfileUpdates = {
-  photo_url?: UserAvatar;
+  photo_url?: string;
   full_name?: string;
   weight?: number | null;
   height?: number | null;
@@ -24,6 +24,7 @@ type AuthContextValue = {
   register: (username: string, password: string) => Promise<PublicUser>;
   logout: () => void;
   updateProfile: (updates: ProfileUpdates) => Promise<PublicUser>;
+  uploadPhoto: (file: File) => Promise<PublicUser>;
 };
 
 type UserResponse = {
@@ -140,9 +141,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(updatedUser);
       return updatedUser;
     },
+    uploadPhoto: async (file) => {
+      if (!user) throw new Error('Потрібна авторизація.');
+
+      const formData = new FormData();
+      formData.append('photo', file);
+
+      const response = await fetch('/api/auth/photo', {
+        method: 'POST',
+        body: formData,
+      });
+      const updatedUser = await readUserResponse(response);
+
+      saveCurrentUser(updatedUser);
+      setUser(updatedUser);
+      return updatedUser;
+    },
   }), [isReady, router, user]);
 
-  const shouldHideProtectedContent = !isReady || (!user && !publicRoutes.includes(pathname));
+  const isPublicRoute = publicRoutes.includes(pathname);
+  const shouldHideProtectedContent = !isPublicRoute && (!isReady || !user);
 
   return (
     <AuthContext.Provider value={value}>

@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { findUserById, ProfileUpdates, toPublicUser, updateUserProfile } from '@/lib/server/users-repository';
 import { getSessionUserId } from '@/lib/server/session';
-import { UserAvatar } from '@/lib/user-types';
 
 function parseNumberOrNull(value: unknown) {
   if (value === null || value === '') return null;
@@ -12,8 +11,15 @@ function parseNumberOrNull(value: unknown) {
   return Number.isFinite(parsedValue) && parsedValue > 0 ? parsedValue : null;
 }
 
-function parseAvatar(value: unknown): UserAvatar | undefined {
-  return value === 'dumbbell' || value === 'bottle' ? value : undefined;
+function parseAvatar(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmedValue = value.trim();
+
+  if (trimmedValue === 'dumbbell' || trimmedValue === 'bottle' || trimmedValue.startsWith('/userphotos/')) {
+    return trimmedValue;
+  }
+
+  return undefined;
 }
 
 export async function GET(request: Request) {

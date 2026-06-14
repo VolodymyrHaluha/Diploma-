@@ -1,5 +1,5 @@
 import { Navbar } from '@/components/layout/Navbar';
-import { ThreeColumnDashboard } from '@/components/dashboard/ThreeColumnDashboard';
+import { DynamicDashboard } from '@/components/dashboard/DynamicDashboard';
 import { Footer } from '@/components/layout/Footer';
 
 export default function NewsPage() {
@@ -7,7 +7,7 @@ export default function NewsPage() {
     <main className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-24" />
-      <ThreeColumnDashboard />
+      <DynamicDashboard />
       <Footer />
     </main>
   );

@@ -61,7 +61,7 @@ export function Footer() {
 
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-sm flex items-center justify-center font-bold text-background">Z</div>
+              <div className="w-10 h-10 bg-primary rounded-sm flex items-center justify-center font-bold text-background">F</div>
               <span className="text-2xl font-headline font-bold tracking-tighter uppercase neon-glow-blue">ZenithFit</span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">

@@ -4,6 +4,7 @@
 DROP TABLE IF EXISTS attendance;
 DROP TABLE IF EXISTS subscriptions;
 DROP TABLE IF EXISTS equipment_usage;
+DROP TABLE IF EXISTS user_training;
 DROP TABLE IF EXISTS class_sessions;
 DROP TABLE IF EXISTS news_posts;
 DROP TABLE IF EXISTS trainers;
@@ -167,6 +168,21 @@ CREATE TABLE news_posts (
         ON UPDATE CASCADE ON DELETE RESTRICT
 );
 
+CREATE TABLE user_training (
+    id SERIAL PRIMARY KEY,
+    user_ids INTEGER NOT NULL,
+    class_session_ids INTEGER NOT NULL,
+    date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_user_training_user
+        FOREIGN KEY (user_ids) REFERENCES users(id)
+        ON UPDATE CASCADE ON DELETE CASCADE,
+
+    CONSTRAINT fk_user_training_class_session
+        FOREIGN KEY (class_session_ids) REFERENCES class_sessions(id)
+        ON UPDATE CASCADE ON DELETE CASCADE
+);
+
 -- Indexes
 CREATE INDEX idx_clients_status ON clients (status);
 CREATE INDEX idx_trainers_specialty ON trainers (specialty);
@@ -184,6 +200,9 @@ CREATE INDEX idx_users_role ON users (role);
 CREATE INDEX idx_news_posts_author_id ON news_posts (author_id);
 CREATE INDEX idx_news_posts_tag ON news_posts (tag);
 CREATE INDEX idx_news_posts_created_at ON news_posts (created_at);
+CREATE INDEX idx_user_training_user_ids ON user_training (user_ids);
+CREATE INDEX idx_user_training_class_session_ids ON user_training (class_session_ids);
+CREATE INDEX idx_user_training_date ON user_training (date);
 
 -- Triggers for updated_at
 CREATE TRIGGER trg_membership_plans_updated_at

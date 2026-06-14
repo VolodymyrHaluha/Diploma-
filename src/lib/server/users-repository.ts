@@ -18,14 +18,14 @@ type UserRow = {
 let usersTableReady: Promise<void> | null = null;
 
 export type ProfileUpdates = {
-  photo_url?: UserAvatar;
+  photo_url?: string;
   full_name?: string;
   weight?: number | null;
   height?: number | null;
 };
 
-function normalizeAvatar(value: string | null): UserAvatar {
-  return value === 'bottle' ? 'bottle' : 'dumbbell';
+function normalizeAvatar(value: string | null) {
+  return value?.trim() || 'dumbbell';
 }
 
 function serializeDate(value: Date | string) {

@@ -26,7 +26,6 @@ export function Navbar() {
   const navLinks = [
     { name: 'Головна', href: '/' },
     { name: 'Абонементи', href: '/membership' },
-    { name: 'Заняття', href: '/classes' },
     { name: 'Тренери', href: '/trainers' },
     { name: 'Розклад', href: '/schedule' },
     { name: 'Новини', href: '/news' },
@@ -42,7 +41,7 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">Z</div>
+          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">F</div>
           <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">ZenithFit</span>
         </Link>
 
