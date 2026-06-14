@@ -9,24 +9,24 @@ import { cn } from '@/lib/utils';
 export function MembershipPlans() {
   const plans = [
     {
-      name: 'Basic',
+      name: 'Базовий',
       price: '49',
-      description: 'Perfect for starters looking for a premium gym floor experience.',
-      features: ['Access to Gym Floor', 'Locker Room Access', 'Standard Classes', 'Initial Fitness Assessment'],
+      description: 'Ідеальний старт для комфортного доступу до преміального тренажерного залу.',
+      features: ['Доступ до тренажерного залу', 'Роздягальні та шафки', 'Стандартні групові заняття', 'Первинна фітнес-оцінка'],
       popular: false
     },
     {
-      name: 'Premium',
+      name: 'Преміум',
       price: '89',
-      description: 'Our most popular plan for serious fitness enthusiasts.',
-      features: ['All Basic Features', 'Unlimited Classes', 'Pool & Spa Access', 'Dietary Consultation', 'Guest Pass (2/mo)'],
+      description: 'Найпопулярніший план для тих, хто тренується регулярно та хоче більше можливостей.',
+      features: ['Усе з Базового плану', 'Необмежені групові заняття', 'Доступ до басейну та SPA', 'Консультація з харчування', '2 гостьові візити на місяць'],
       popular: true
     },
     {
       name: 'VIP',
       price: '149',
-      description: 'The ultimate luxury fitness experience with personal care.',
-      features: ['All Premium Features', 'Personal Trainer (4/mo)', 'VIP Lounge Access', 'Laundry Service', 'Supplement Package'],
+      description: 'Максимальний рівень сервісу з персональним супроводом і преміальними перевагами.',
+      features: ['Усе з Преміум плану', '4 персональні тренування на місяць', 'Доступ до VIP-зони', 'Сервіс рушників і форми', 'Пакет спортивного харчування'],
       popular: false
     }
   ];
@@ -38,8 +38,8 @@ export function MembershipPlans() {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-headline font-bold">Choose Your <span className="text-primary">Plan</span></h2>
-          <p className="text-muted-foreground">Transparent pricing for premium results. Join the elite fitness community of ZenithFit today.</p>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold">Оберіть свій <span className="text-primary">абонемент</span></h2>
+          <p className="text-muted-foreground">Прозорі тарифи для реальних результатів. Приєднуйтеся до преміальної фітнес-спільноти ZenithFit.</p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -53,14 +53,14 @@ export function MembershipPlans() {
             >
               {plan.popular && (
                 <div className="bg-primary text-background font-bold text-[10px] uppercase tracking-tighter py-1 text-center">
-                  Most Popular
+                  Найпопулярніший
                 </div>
               )}
               <CardHeader className="text-center">
                 <CardTitle className="font-headline text-2xl">{plan.name}</CardTitle>
                 <div className="pt-4 pb-2">
                   <span className="text-4xl font-bold font-headline">${plan.price}</span>
-                  <span className="text-muted-foreground ml-1">/mo</span>
+                  <span className="text-muted-foreground ml-1">/ міс.</span>
                 </div>
                 <CardDescription className="text-sm">{plan.description}</CardDescription>
               </CardHeader>
@@ -82,7 +82,7 @@ export function MembershipPlans() {
                   "w-full font-bold",
                   plan.popular ? "bg-primary text-background" : "bg-white/5 border-white/10 hover:bg-white/10"
                 )}>
-                  Get Started
+                  Обрати план
                 </Button>
               </CardFooter>
             </Card>

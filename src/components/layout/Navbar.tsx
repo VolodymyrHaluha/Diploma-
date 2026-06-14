@@ -1,4 +1,3 @@
-
 "use client"
 
 import React, { useState, useEffect } from 'react';
@@ -22,13 +21,13 @@ export function Navbar() {
   }, []);
 
   const navLinks = [
-    { name: 'Home', href: '/' },
-    { name: 'Membership', href: '/membership' },
-    { name: 'Classes', href: '/classes' },
-    { name: 'Trainers', href: '/trainers' },
-    { name: 'Schedule', href: '/schedule' },
-    { name: 'News', href: '/news' },
-    { name: 'Contact', href: '/contact' },
+    { name: 'Головна', href: '/' },
+    { name: 'Абонементи', href: '/membership' },
+    { name: 'Заняття', href: '/classes' },
+    { name: 'Тренери', href: '/trainers' },
+    { name: 'Розклад', href: '/schedule' },
+    { name: 'Новини', href: '/news' },
+    { name: 'Контакти', href: '/contact' },
   ];
 
   return (
@@ -40,11 +39,10 @@ export function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">F</div>
-          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">Fitness Club</span>
+          <div className="w-8 h-8 bg-primary rounded-sm flex items-center justify-center font-bold text-background group-hover:rotate-12 transition-transform">Z</div>
+          <span className="text-xl font-headline font-bold tracking-tighter neon-glow-blue uppercase">ZenithFit</span>
         </Link>
 
-        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link 
@@ -58,21 +56,20 @@ export function Navbar() {
               {link.name}
             </Link>
           ))}
-          <Button variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
-            Join Now
+          <Button asChild variant="default" className="bg-primary text-background font-bold hover:bg-primary/90">
+            <Link href="/login">Увійти</Link>
           </Button>
         </nav>
 
-        {/* Mobile Toggle */}
         <button 
           className="md:hidden text-foreground"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Відкрити меню"
         >
           {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
-      {/* Mobile Menu */}
       <div 
         className={cn(
           "fixed inset-0 top-[60px] bg-background z-40 md:hidden transition-transform duration-300 flex flex-col items-center justify-center gap-8 p-10",
@@ -89,8 +86,8 @@ export function Navbar() {
             {link.name}
           </Link>
         ))}
-        <Button size="lg" className="w-full bg-primary text-background font-bold">
-          Join Now
+        <Button asChild size="lg" className="w-full bg-primary text-background font-bold">
+          <Link href="/login" onClick={() => setMobileMenuOpen(false)}>Увійти</Link>
         </Button>
       </div>
     </header>

@@ -7,15 +7,15 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 export function ClassSchedule() {
-  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const [activeDay, setActiveDay] = useState('Monday');
+  const days = ['Понеділок', 'Вівторок', 'Середа', 'Четвер', 'Пʼятниця', 'Субота', 'Неділя'];
+  const [activeDay, setActiveDay] = useState('Понеділок');
 
   const classes = [
-    { time: '07:00 AM', name: 'Power Yoga', instructor: 'Elena Vance', intensity: 'Medium', room: 'Zen Studio' },
-    { time: '09:00 AM', name: 'HIIT Circuit', instructor: 'Marcus Thorne', intensity: 'High', room: 'Main Floor' },
-    { time: '11:00 AM', name: 'Spin Mastery', instructor: 'David Beck', intensity: 'High', room: 'Cycle Lab' },
-    { time: '04:00 PM', name: 'Body Pump', instructor: 'Sarah J.', intensity: 'Medium', room: 'Studio 1' },
-    { time: '06:00 PM', name: 'Boxing Basics', instructor: 'Tyson R.', intensity: 'Extreme', room: 'Combat Zone' },
+    { time: '07:00', name: 'Power Yoga', instructor: 'Олена Венс', intensity: 'Середня', room: 'Zen Studio' },
+    { time: '09:00', name: 'HIIT Circuit', instructor: 'Маркус Торн', intensity: 'Висока', room: 'Головний зал' },
+    { time: '11:00', name: 'Spin Mastery', instructor: 'Девід Бек', intensity: 'Висока', room: 'Cycle Lab' },
+    { time: '16:00', name: 'Body Pump', instructor: 'Сара Дж.', intensity: 'Середня', room: 'Студія 1' },
+    { time: '18:00', name: 'Boxing Basics', instructor: 'Тайсон Р.', intensity: 'Екстремальна', room: 'Combat Zone' },
   ];
 
   return (
@@ -23,8 +23,8 @@ export function ClassSchedule() {
       <div className="container mx-auto px-4">
         <div id="schedule" />
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Weekly <span className="text-primary">Schedule</span></h2>
-          <p className="text-muted-foreground">Find the perfect class that fits your busy lifestyle. Filter by day and book your spot instantly.</p>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Тижневий <span className="text-primary">розклад</span></h2>
+          <p className="text-muted-foreground">Знайдіть заняття під свій ритм життя. Оберіть день і забронюйте місце в групі.</p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-10">
@@ -48,11 +48,11 @@ export function ClassSchedule() {
           <Table>
             <TableHeader className="bg-white/5">
               <TableRow className="border-b-white/10">
-                <TableHead className="font-headline font-bold text-foreground">Time</TableHead>
-                <TableHead className="font-headline font-bold text-foreground">Class Name</TableHead>
-                <TableHead className="font-headline font-bold text-foreground">Instructor</TableHead>
-                <TableHead className="font-headline font-bold text-foreground">Intensity</TableHead>
-                <TableHead className="font-headline font-bold text-foreground text-right">Action</TableHead>
+                <TableHead className="font-headline font-bold text-foreground">Час</TableHead>
+                <TableHead className="font-headline font-bold text-foreground">Назва заняття</TableHead>
+                <TableHead className="font-headline font-bold text-foreground">Тренер</TableHead>
+                <TableHead className="font-headline font-bold text-foreground">Інтенсивність</TableHead>
+                <TableHead className="font-headline font-bold text-foreground text-right">Дія</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -69,14 +69,14 @@ export function ClassSchedule() {
                       variant="outline" 
                       className={cn(
                         "text-[10px] uppercase",
-                        cls.intensity === 'High' || cls.intensity === 'Extreme' ? "border-red-500/50 text-red-500" : "border-secondary/50 text-secondary"
+                        cls.intensity === 'Висока' || cls.intensity === 'Екстремальна' ? "border-red-500/50 text-red-500" : "border-secondary/50 text-secondary"
                       )}
                     >
                       {cls.intensity}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button size="sm" className="bg-secondary text-background hover:bg-secondary/90 font-bold">Book Spot</Button>
+                    <Button size="sm" className="bg-secondary text-background hover:bg-secondary/90 font-bold">Записатися</Button>
                   </TableCell>
                 </TableRow>
               ))}
