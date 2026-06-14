@@ -3,42 +3,39 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Instagram, Twitter, Facebook, Youtube, MapPin, Phone, Mail, Clock } from 'lucide-react';
+import { Instagram, Twitter, Facebook, Youtube, MapPin, Phone, Clock } from 'lucide-react';
 
 export function Footer() {
   return (
     <footer id="contact" className="bg-card pt-20 pb-10 border-t border-white/5">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 mb-20">
-          
-          {/* Contact Form */}
           <div className="space-y-8">
             <div className="space-y-4">
-              <h3 className="text-3xl font-headline font-bold">Get In <span className="text-primary">Touch</span></h3>
-              <p className="text-muted-foreground">Have questions about our memberships or classes? Send us a message.</p>
+              <h3 className="text-3xl font-headline font-bold">Звʼяжіться <span className="text-primary">з нами</span></h3>
+              <p className="text-muted-foreground">Є питання щодо абонементів або занять? Надішліть нам повідомлення.</p>
             </div>
             <form className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Full Name" className="bg-background border-white/10 focus:border-primary" />
-                <Input placeholder="Email Address" className="bg-background border-white/10 focus:border-primary" />
+                <Input placeholder="Повне імʼя" className="bg-background border-white/10 focus:border-primary" />
+                <Input placeholder="Email" className="bg-background border-white/10 focus:border-primary" />
               </div>
-              <Input placeholder="Subject" className="bg-background border-white/10 focus:border-primary" />
-              <Textarea placeholder="Your Message" className="bg-background border-white/10 focus:border-primary min-h-[120px]" />
-              <Button className="w-full bg-primary text-background font-bold h-12">Send Message</Button>
+              <Input placeholder="Тема" className="bg-background border-white/10 focus:border-primary" />
+              <Textarea placeholder="Ваше повідомлення" className="bg-background border-white/10 focus:border-primary min-h-[120px]" />
+              <Button className="w-full bg-primary text-background font-bold h-12">Надіслати</Button>
             </form>
           </div>
 
-          {/* Contact Info & Map */}
           <div className="space-y-8">
-            <h3 className="text-2xl font-headline font-bold">Find <span className="text-secondary">Us</span></h3>
+            <h3 className="text-2xl font-headline font-bold">Де нас <span className="text-secondary">знайти</span></h3>
             <div className="space-y-6">
               <div className="flex gap-4">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
                   <MapPin className="text-primary w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold mb-1">Location</h4>
-                  <p className="text-sm text-muted-foreground">123 Fitness Ave, Luxury District<br />Metropolis, NY 10001</p>
+                  <h4 className="font-bold mb-1">Локація</h4>
+                  <p className="text-sm text-muted-foreground">вул. Фітнесу, 123, Luxury District<br />Київ, Україна</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -46,8 +43,8 @@ export function Footer() {
                   <Clock className="text-secondary w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold mb-1">Working Hours</h4>
-                  <p className="text-sm text-muted-foreground">Mon - Fri: 5:00 AM - 11:00 PM<br />Sat - Sun: 7:00 AM - 9:00 PM</p>
+                  <h4 className="font-bold mb-1">Графік роботи</h4>
+                  <p className="text-sm text-muted-foreground">Пн-Пт: 07:00 - 23:00<br />Сб-Нд: 09:00 - 21:00</p>
                 </div>
               </div>
               <div className="flex gap-4">
@@ -55,21 +52,20 @@ export function Footer() {
                   <Phone className="text-primary w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="font-bold mb-1">Contact</h4>
-                  <p className="text-sm text-muted-foreground">+1 (555) 123-4567<br />hello@zenithfit.com</p>
+                  <h4 className="font-bold mb-1">Контакти</h4>
+                  <p className="text-sm text-muted-foreground">+380 (44) 123-45-67<br />hello@zenithfit.ua</p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Socials & Branding */}
           <div className="space-y-8">
             <Link href="/" className="flex items-center gap-2">
               <div className="w-10 h-10 bg-primary rounded-sm flex items-center justify-center font-bold text-background">Z</div>
               <span className="text-2xl font-headline font-bold tracking-tighter uppercase neon-glow-blue">ZenithFit</span>
             </Link>
             <p className="text-muted-foreground leading-relaxed">
-              ZenithFit is more than just a gym. We are a high-performance community committed to pushing the boundaries of human potential.
+              ZenithFit — це більше, ніж тренажерний зал. Ми створюємо сильну спільноту, яка допомагає розкривати потенціал кожного.
             </p>
             <div className="flex gap-4">
               {[Instagram, Twitter, Facebook, Youtube].map((Icon, i) => (
@@ -82,11 +78,11 @@ export function Footer() {
         </div>
 
         <div className="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-muted-foreground font-medium uppercase tracking-widest">
-          <p>© 2024 ZenithFit Premium Fitness Club. All Rights Reserved.</p>
+          <p>© 2024 ZenithFit Premium Fitness Club. Усі права захищено.</p>
           <div className="flex gap-8">
-            <Link href="#" className="hover:text-primary">Privacy Policy</Link>
-            <Link href="#" className="hover:text-primary">Terms of Service</Link>
-            <Link href="#" className="hover:text-primary">Cookie Policy</Link>
+            <Link href="#" className="hover:text-primary">Політика конфіденційності</Link>
+            <Link href="#" className="hover:text-primary">Умови користування</Link>
+            <Link href="#" className="hover:text-primary">Cookie-файли</Link>
           </div>
         </div>
       </div>

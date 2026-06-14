@@ -4,18 +4,18 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function EquipmentGallery() {
   const items = [
-    { id: 'equipment-1', title: 'Cardio Suite', desc: 'Next-gen Matrix treadmills and ellipticals.' },
-    { id: 'equipment-2', title: 'Strength Lab', desc: 'Over 5,000kg of Olympic grade weights.' },
-    { id: 'equipment-3', title: 'Cycle Studio', desc: 'Immersive sound and lighting spin experience.' },
-    { id: 'equipment-4', title: 'Aquatic Center', desc: 'Heated 25m pool and revitalizing spa.' },
+    { id: 'equipment-1', title: 'Кардіо-зона', desc: 'Сучасні бігові доріжки та еліптичні тренажери Matrix.' },
+    { id: 'equipment-2', title: 'Силова лабораторія', desc: 'Понад 5 000 кг професійних олімпійських ваг.' },
+    { id: 'equipment-3', title: 'Cycle Studio', desc: 'Імерсивні велотренування зі світлом і потужним звуком.' },
+    { id: 'equipment-4', title: 'Аквазона', desc: 'Підігрітий 25-метровий басейн і відновлювальний SPA.' },
   ];
 
   return (
     <section className="py-24 bg-background">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16 space-y-4">
-          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Premium <span className="text-secondary">Facilities</span></h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">Explore our world-class facilities equipped with the latest technology in fitness.</p>
+          <h2 className="text-4xl md:text-5xl font-headline font-bold uppercase tracking-tighter">Преміальна <span className="text-secondary">інфраструктура</span></h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Оцініть простір світового рівня з найновішими фітнес-технологіями.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">

@@ -5,7 +5,7 @@ chcp 65001 >nul
 cd /d "%~dp0"
 
 echo ========================================
-echo   ZenithFit: Flask-only запуск
+echo   ZenithFit: node запуск
 echo ========================================
 
 if not exist package.json (
