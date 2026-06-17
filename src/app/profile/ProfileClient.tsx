@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Activity, CupSoda, Dumbbell, ImagePlus, Trophy } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { UserAvatarIcon } from '@/components/auth/UserAvatarIcon';
 import { UserAvatar } from '@/lib/auth-storage';
@@ -29,6 +29,8 @@ const dayOrder = [
 const dayLabels: Record<string, string> = {
   ...Object.fromEntries(dayOrder.map((day) => [day.value, day.label])),
 };
+
+const trainingDayChartColors = ['#66CCFF', '#26D9BA', '#FF9933', '#A17FFF', '#FF668A', '#FFD166', '#7BD88F'];
 
 type ProfileClientProps = {
   initialTrainings: UserTraining[];
@@ -61,6 +63,10 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
     );
   }, [weeklyTrainingUsage]);
 
+  const weeklyTrainingPieData = useMemo(() => {
+    return weeklyTrainingUsage.filter((day) => day.value > 0);
+  }, [weeklyTrainingUsage]);
+
   useEffect(() => {
     if (!user) return;
 
@@ -82,7 +88,7 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
       setIsTrainingsLoading(false);
     }
 
-    fetch('/api/profile/trainings', { cache: 'no-store' })
+    fetch(`/api/profile/trainings?t=${Date.now()}`, { cache: 'no-store' })
       .then(async (response) => {
         const data = await response.json().catch(() => ({})) as {
           trainings?: UserTraining[];
@@ -335,6 +341,52 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
                       </h3>
                     </div>
                   </div>
+
+                  <div className="mt-5 h-[210px]">
+                    {weeklyTrainingPieData.length ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={weeklyTrainingPieData}
+                            dataKey="value"
+                            nameKey="name"
+                            innerRadius={46}
+                            outerRadius={78}
+                            paddingAngle={weeklyTrainingPieData.length > 1 ? 4 : 0}
+                          >
+                            {weeklyTrainingPieData.map((day, index) => (
+                              <Cell key={day.name} fill={trainingDayChartColors[index % trainingDayChartColors.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value) => [value, 'Кількість']}
+                            contentStyle={{ backgroundColor: '#141B1F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }}
+                          />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <div className="flex h-full items-center justify-center rounded-xl border border-white/10 bg-background/20 text-sm text-muted-foreground">
+                        Немає даних для діаграми
+                      </div>
+                    )}
+                  </div>
+
+                  {weeklyTrainingPieData.length ? (
+                    <div className="mt-4 grid grid-cols-2 gap-2">
+                      {weeklyTrainingPieData.map((day, index) => (
+                        <div key={day.name} className="flex items-center justify-between gap-2 rounded-lg bg-background/20 px-3 py-2 text-xs">
+                          <span className="flex min-w-0 items-center gap-2 text-muted-foreground">
+                            <span
+                              className="h-2.5 w-2.5 shrink-0 rounded-full"
+                              style={{ backgroundColor: trainingDayChartColors[index % trainingDayChartColors.length] }}
+                            />
+                            <span className="truncate">{day.name}</span>
+                          </span>
+                          <span className="font-bold text-foreground">{day.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>

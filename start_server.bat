@@ -58,11 +58,9 @@ if errorlevel 1 goto :finish
 call :free_port
 if errorlevel 1 goto :finish
 
-if not exist .next\BUILD_ID (
-  echo Production build was not found.
-  echo Run npm run build once before starting the production server.
-  goto :finish
-)
+echo Building fresh production app...
+call npm run build
+if errorlevel 1 goto :finish
 
 if exist .next\routes-manifest.json (
   node -e "const fs=require('fs');const p='.next/routes-manifest.json';const m=JSON.parse(fs.readFileSync(p,'utf8'));if(!Array.isArray(m.dataRoutes))m.dataRoutes=[];fs.writeFileSync(p,JSON.stringify(m));"
