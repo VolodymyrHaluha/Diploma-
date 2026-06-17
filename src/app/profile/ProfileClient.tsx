@@ -331,59 +331,61 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
                   </CardContent>
                 </Card>
 
-                <div className="h-fit w-fit self-start rounded-2xl border border-secondary/20 bg-secondary/10 p-5">
-                  <div className="flex items-center gap-3">
-                    <Trophy className="h-8 w-8 text-secondary" />
-                    <div>
-                      <p className="text-sm text-muted-foreground">Найчастіший день тренувань</p>
-                      <h3 className="text-2xl font-bold text-secondary">
-                        {mostActiveDay.value > 0 ? mostActiveDay.name : 'Немає записів'}
-                      </h3>
+                <div className="h-fit self-start rounded-2xl border border-secondary/20 bg-secondary/10 p-5 xl:max-w-[360px]">
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
+                    <div className="flex items-center gap-3">
+                      <Trophy className="h-8 w-8 shrink-0 text-secondary" />
+                      <div>
+                        <p className="text-sm text-muted-foreground">Найчастіший день тренувань</p>
+                        <h3 className="text-2xl font-bold text-secondary">
+                          {mostActiveDay.value > 0 ? mostActiveDay.name : 'Немає записів'}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center sm:ml-auto">
+                      {weeklyTrainingChartData.length ? (
+                        <PieChart width={130} height={130}>
+                          <Pie
+                            data={weeklyTrainingChartData}
+                            dataKey="value"
+                            nameKey="name"
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={32}
+                            outerRadius={58}
+                            paddingAngle={2}
+                          >
+                            {weeklyTrainingChartData.map((day, index) => (
+                              <Cell key={day.name} fill={chartColors[index % chartColors.length]} />
+                            ))}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value) => [value, 'Кількість']}
+                            contentStyle={{ backgroundColor: '#141B1F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }}
+                          />
+                        </PieChart>
+                      ) : (
+                        <div className="flex h-[130px] w-[130px] items-center justify-center rounded-full border border-white/10 bg-white/5 text-center text-xs text-muted-foreground">
+                          Немає даних
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <div className="mt-5">
-                    <p className="mb-3 text-sm font-medium text-muted-foreground">Розподіл тренувань по днях</p>
-                    {weeklyTrainingChartData.length ? (
-                      <PieChart width={260} height={240}>
-                        <Pie
-                          data={weeklyTrainingChartData}
-                          dataKey="value"
-                          nameKey="name"
-                          cx="50%"
-                          cy="45%"
-                          innerRadius={45}
-                          outerRadius={80}
-                          paddingAngle={2}
-                        >
-                          {weeklyTrainingChartData.map((day, index) => (
-                            <Cell key={day.name} fill={chartColors[index % chartColors.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          formatter={(value) => [value, 'Кількість']}
-                          contentStyle={{ backgroundColor: '#141B1F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }}
-                        />
-                      </PieChart>
-                    ) : (
-                      <div className="flex h-[180px] w-[260px] items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-center text-sm text-muted-foreground">
-                        Немає даних для діаграми
-                      </div>
-                    )}
-                    {weeklyTrainingChartData.length ? (
-                      <div className="mt-2 grid gap-2 text-sm">
-                        {weeklyTrainingChartData.map((day, index) => (
-                          <div key={day.name} className="flex items-center justify-between gap-4">
-                            <span className="flex items-center gap-2 text-muted-foreground">
-                              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
-                              {day.name}
-                            </span>
-                            <span className="font-semibold text-secondary">{day.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    ) : null}
-                  </div>
+                  {weeklyTrainingChartData.length ? (
+                    <div className="mt-4 grid gap-2 text-sm">
+                      {weeklyTrainingChartData.map((day, index) => (
+                        <div key={day.name} className="flex items-center justify-between gap-4">
+                          <span className="flex items-center gap-2 text-muted-foreground">
+                            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
+                            {day.name}
+                          </span>
+                          <span className="font-semibold text-secondary">{day.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
