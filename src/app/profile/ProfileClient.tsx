@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Activity, CupSoda, Dumbbell, ImagePlus, Trophy } from 'lucide-react';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { UserAvatarIcon } from '@/components/auth/UserAvatarIcon';
 import { UserAvatar } from '@/lib/auth-storage';
@@ -29,6 +29,8 @@ const dayOrder = [
 const dayLabels: Record<string, string> = {
   ...Object.fromEntries(dayOrder.map((day) => [day.value, day.label])),
 };
+
+const chartColors = ['#26D9BA', '#60A5FA', '#FBBF24', '#F472B6', '#A78BFA', '#34D399', '#FB7185'];
 
 type ProfileClientProps = {
   initialTrainings: UserTraining[];
@@ -59,6 +61,10 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
       (favorite, day) => day.value > favorite.value ? day : favorite,
       weeklyTrainingUsage[0]
     );
+  }, [weeklyTrainingUsage]);
+
+  const weeklyTrainingChartData = useMemo(() => {
+    return weeklyTrainingUsage.filter((day) => day.value > 0);
   }, [weeklyTrainingUsage]);
 
   useEffect(() => {
@@ -325,7 +331,7 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
                   </CardContent>
                 </Card>
 
-                <div className="rounded-2xl border border-secondary/20 bg-secondary/10 p-5">
+                <div className="h-fit w-fit self-start rounded-2xl border border-secondary/20 bg-secondary/10 p-5">
                   <div className="flex items-center gap-3">
                     <Trophy className="h-8 w-8 text-secondary" />
                     <div>
@@ -334,6 +340,49 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
                         {mostActiveDay.value > 0 ? mostActiveDay.name : 'Немає записів'}
                       </h3>
                     </div>
+                  </div>
+
+                  <div className="mt-5">
+                    <p className="mb-3 text-sm font-medium text-muted-foreground">Розподіл тренувань по днях</p>
+                    {weeklyTrainingChartData.length ? (
+                      <PieChart width={260} height={240}>
+                        <Pie
+                          data={weeklyTrainingChartData}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="45%"
+                          innerRadius={45}
+                          outerRadius={80}
+                          paddingAngle={2}
+                        >
+                          {weeklyTrainingChartData.map((day, index) => (
+                            <Cell key={day.name} fill={chartColors[index % chartColors.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value) => [value, 'Кількість']}
+                          contentStyle={{ backgroundColor: '#141B1F', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }}
+                        />
+                      </PieChart>
+                    ) : (
+                      <div className="flex h-[180px] w-[260px] items-center justify-center rounded-2xl border border-white/10 bg-white/5 text-center text-sm text-muted-foreground">
+                        Немає даних для діаграми
+                      </div>
+                    )}
+                    {weeklyTrainingChartData.length ? (
+                      <div className="mt-2 grid gap-2 text-sm">
+                        {weeklyTrainingChartData.map((day, index) => (
+                          <div key={day.name} className="flex items-center justify-between gap-4">
+                            <span className="flex items-center gap-2 text-muted-foreground">
+                              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: chartColors[index % chartColors.length] }} />
+                              {day.name}
+                            </span>
+                            <span className="font-semibold text-secondary">{day.value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </div>
