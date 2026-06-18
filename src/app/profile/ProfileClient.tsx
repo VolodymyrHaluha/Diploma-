@@ -34,9 +34,10 @@ const trainingDayChartColors = ['#66CCFF', '#26D9BA', '#FF9933', '#A17FFF', '#FF
 
 type ProfileClientProps = {
   initialTrainings: UserTraining[];
+  initialMembershipStatus: string | null;
 };
 
-export function ProfileClient({ initialTrainings }: ProfileClientProps) {
+export function ProfileClient({ initialTrainings, initialMembershipStatus }: ProfileClientProps) {
   const { user, updateProfile, uploadPhoto } = useAuth();
   const photoInputRef = useRef<HTMLInputElement | null>(null);
   const [fullName, setFullName] = useState(user?.full_name ?? '');
@@ -201,8 +202,11 @@ export function ProfileClient({ initialTrainings }: ProfileClientProps) {
 
           <div className="grid gap-5 lg:grid-cols-[25fr_75fr]">
             <Card className="glass-card border-white/10">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between gap-3">
                 <CardTitle className="font-headline text-2xl">Мій профіль</CardTitle>
+                <Badge className="bg-secondary/15 text-secondary hover:bg-secondary/15">
+                  {initialMembershipStatus ?? 'Без абонемента'}
+                </Badge>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="flex flex-col items-center rounded-3xl border border-white/10 bg-white/5 p-6 text-center">
