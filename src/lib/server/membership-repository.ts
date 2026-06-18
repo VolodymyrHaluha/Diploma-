@@ -72,20 +72,6 @@ async function ensureMembershipTables() {
   return membershipTablesReady;
 }
 
-export async function getUserMembershipStatus(userId: number) {
-  await ensureMembershipTables();
-  const pool = getDbPool();
-  const result = await pool.query<{ status: string }>(
-    `SELECT status
-     FROM clients
-     WHERE user_id = $1
-     LIMIT 1`,
-    [userId]
-  );
-
-  return result.rows[0]?.status ?? null;
-}
-
 export async function activateDemoMembership(userId: number, planName: MembershipPlanName) {
   const user = await findUserById(userId);
 
