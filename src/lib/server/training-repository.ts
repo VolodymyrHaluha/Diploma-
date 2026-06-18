@@ -40,6 +40,8 @@ const seedClasses = [
   [5, 'Boxing Basics', 'Monday', '18:00:00', 14],
 ] as const;
 
+const scheduleDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 let trainingTablesReady: Promise<void> | null = null;
 
 function serializeDate(value: Date | string) {
@@ -48,6 +50,43 @@ function serializeDate(value: Date | string) {
 
 function normalizeTime(value: string) {
   return value.length >= 5 ? value.slice(0, 5) : value;
+}
+
+function getTodayScheduleDay() {
+  const day = new Date().getDay();
+
+  return day === 0 ? 'Sunday' : scheduleDays[day - 1];
+}
+
+function getBookableScheduleDays(todayValue = getTodayScheduleDay()) {
+  if (todayValue === 'Saturday' || todayValue === 'Sunday') {
+    return scheduleDays;
+  }
+
+  const todayIndex = scheduleDays.indexOf(todayValue);
+
+  return todayIndex === -1 ? scheduleDays : scheduleDays.slice(todayIndex);
+}
+
+async function prunePastUnbookedClassSessions() {
+  const bookableDays = getBookableScheduleDays();
+
+  if (bookableDays.length === scheduleDays.length) {
+    return;
+  }
+
+  const pool = getDbPool();
+
+  await pool.query(
+    `DELETE FROM class_sessions cs
+     WHERE NOT (cs.day_of_week = ANY($1::varchar[]))
+       AND NOT EXISTS (
+         SELECT 1
+         FROM user_training ut
+         WHERE ut.class_session_ids = cs.id
+       )`,
+    [bookableDays]
+  );
 }
 
 function mapClassSession(row: ClassSessionRow): ClassSession {
@@ -145,6 +184,8 @@ export async function ensureTrainingTables() {
           [trainerId, title, dayOfWeek, startTime, capacity]
         );
       }
+
+      await prunePastUnbookedClassSessions();
     })().catch((error) => {
       trainingTablesReady = null;
       throw error;
@@ -156,9 +197,16 @@ export async function ensureTrainingTables() {
 
 export async function listClassSessions(dayOfWeek?: string) {
   await ensureTrainingTables();
+  await prunePastUnbookedClassSessions();
+
   const pool = getDbPool();
-  const params = dayOfWeek ? [dayOfWeek] : [];
-  const where = dayOfWeek ? 'WHERE cs.day_of_week = $1' : '';
+  const bookableDays = getBookableScheduleDays();
+  const params: unknown[] = [bookableDays];
+  const dayFilter = dayOfWeek ? 'AND cs.day_of_week = $2' : '';
+
+  if (dayOfWeek) {
+    params.push(dayOfWeek);
+  }
 
   const result = await pool.query<ClassSessionRow>(
     `SELECT cs.id,
@@ -171,7 +219,8 @@ export async function listClassSessions(dayOfWeek?: string) {
             t.specialty
      FROM class_sessions cs
      JOIN trainers t ON t.id = cs.trainer_id
-     ${where}
+     WHERE cs.day_of_week = ANY($1::varchar[])
+     ${dayFilter}
      ORDER BY cs.start_time ASC`,
     params
   );
@@ -181,10 +230,19 @@ export async function listClassSessions(dayOfWeek?: string) {
 
 export async function createUserTraining(userId: number, classSessionId: number) {
   await ensureTrainingTables();
+  await prunePastUnbookedClassSessions();
+
   const pool = getDbPool();
+  const bookableDays = getBookableScheduleDays();
   const result = await pool.query<UserTrainingRow>(
     `INSERT INTO user_training (user_ids, class_session_ids)
-     VALUES ($1, $2)
+     SELECT $1::integer, $2::integer
+     WHERE EXISTS (
+       SELECT 1
+       FROM class_sessions
+       WHERE id = $2::integer
+         AND day_of_week = ANY($3::varchar[])
+     )
      RETURNING id,
                date,
                class_session_ids AS class_session_id,
@@ -200,8 +258,12 @@ export async function createUserTraining(userId: number, classSessionId: number)
                 FROM class_sessions cs
                 JOIN trainers t ON t.id = cs.trainer_id
                 WHERE cs.id = $2) AS specialty`,
-    [userId, classSessionId]
+    [userId, classSessionId, bookableDays]
   );
+
+  if (!result.rows[0]) {
+    throw new Error('Обране заняття вже недоступне для запису.');
+  }
 
   return mapUserTraining(result.rows[0]);
 }

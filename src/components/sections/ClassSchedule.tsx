@@ -17,6 +17,30 @@ const days = [
   { label: 'Неділя', value: 'Sunday' },
 ];
 
+const dayIndexByValue = new Map(days.map((day, index) => [day.value, index]));
+const weekDayValues = days.map((day) => day.value);
+
+function getTodayScheduleDay() {
+  const day = new Date().getDay();
+
+  return day === 0 ? 'Sunday' : weekDayValues[day - 1];
+}
+
+function canEnrollForDay(dayValue: string, todayValue = getTodayScheduleDay()) {
+  if (todayValue === 'Saturday' || todayValue === 'Sunday') {
+    return true;
+  }
+
+  const dayIndex = dayIndexByValue.get(dayValue);
+  const todayIndex = dayIndexByValue.get(todayValue);
+
+  return dayIndex !== undefined && todayIndex !== undefined && dayIndex >= todayIndex;
+}
+
+function getInitialActiveDay(fallbackDay: string) {
+  return canEnrollForDay(fallbackDay) ? fallbackDay : getTodayScheduleDay();
+}
+
 type ClassesResponse = {
   classes?: ClassSession[];
   message?: string;
@@ -30,7 +54,7 @@ type ClassScheduleProps = {
 const emptyClassSessions: ClassSession[] = [];
 
 export function ClassSchedule({ initialClasses = emptyClassSessions, initialDay = 'Monday' }: ClassScheduleProps) {
-  const [activeDay, setActiveDay] = useState(initialDay);
+  const [activeDay, setActiveDay] = useState(() => getInitialActiveDay(initialDay));
   const [classes, setClasses] = useState<ClassSession[]>(initialClasses);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -110,25 +134,36 @@ export function ClassSchedule({ initialClasses = emptyClassSessions, initialDay 
             Тижневий <span className="text-primary">розклад</span>
           </h2>
           <p className="text-muted-foreground">
-            Знайдіть заняття під свій ритм життя. Оберіть день і забронюйте місце в групі.
+            Знайдіть заняття під свій ритм життя. У будні можна бронювати лише сьогоднішні та майбутні дні
+            тижня, а у вихідні відкритий запис на весь наступний тиждень.
           </p>
         </div>
 
         <div className="flex flex-wrap justify-center gap-2 mb-10">
-          {days.map((day) => (
-            <button
-              key={day.value}
-              onClick={() => setActiveDay(day.value)}
-              className={cn(
-                'px-6 py-2 rounded-full text-sm font-bold transition-all border',
-                activeDay === day.value
-                  ? 'bg-primary text-background border-primary'
-                  : 'bg-white/5 text-muted-foreground border-white/10 hover:border-primary/50'
-              )}
-            >
-              {day.label}
-            </button>
-          ))}
+          {days.map((day) => {
+            const isAvailable = canEnrollForDay(day.value);
+
+            return (
+              <button
+                key={day.value}
+                onClick={() => {
+                  if (isAvailable) setActiveDay(day.value);
+                }}
+                disabled={!isAvailable}
+                aria-disabled={!isAvailable}
+                title={isAvailable ? undefined : 'Запис на цей день уже недоступний цього тижня'}
+                className={cn(
+                  'px-6 py-2 rounded-full text-sm font-bold transition-all border',
+                  activeDay === day.value
+                    ? 'bg-primary text-background border-primary'
+                    : 'bg-white/5 text-muted-foreground border-white/10 hover:border-primary/50',
+                  !isAvailable && 'cursor-not-allowed opacity-40 grayscale hover:border-white/10'
+                )}
+              >
+                {day.label}
+              </button>
+            );
+          })}
         </div>
 
         <div className="glass-card rounded-xl overflow-hidden">
@@ -150,31 +185,39 @@ export function ClassSchedule({ initialClasses = emptyClassSessions, initialDay 
                   </TableCell>
                 </TableRow>
               ) : classes.length ? (
-                classes.map((cls) => (
-                  <TableRow key={cls.id} className="border-b-white/5 hover:bg-white/5 transition-colors">
-                    <TableCell className="font-medium text-primary">{cls.start_time}</TableCell>
-                    <TableCell>
-                      <div className="font-bold">{cls.title}</div>
-                      <div className="text-xs text-muted-foreground">{cls.capacity} місць</div>
-                    </TableCell>
-                    <TableCell>{cls.trainer_name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline" className="text-[10px] uppercase border-secondary/50 text-secondary">
-                        {cls.specialty}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        size="sm"
-                        className="bg-secondary text-background hover:bg-secondary/90 font-bold"
-                        disabled={enrollingId === cls.id}
-                        onClick={() => handleEnroll(cls.id)}
-                      >
-                        {enrollingId === cls.id ? 'Записуємо...' : 'Записатися'}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
+                classes.map((cls) => {
+                  const isClassDayAvailable = canEnrollForDay(cls.day_of_week);
+
+                  return (
+                    <TableRow key={cls.id} className="border-b-white/5 hover:bg-white/5 transition-colors">
+                      <TableCell className="font-medium text-primary">{cls.start_time}</TableCell>
+                      <TableCell>
+                        <div className="font-bold">{cls.title}</div>
+                        <div className="text-xs text-muted-foreground">{cls.capacity} місць</div>
+                      </TableCell>
+                      <TableCell>{cls.trainer_name}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[10px] uppercase border-secondary/50 text-secondary">
+                          {cls.specialty}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          size="sm"
+                          className="bg-secondary text-background hover:bg-secondary/90 font-bold"
+                          disabled={enrollingId === cls.id || !isClassDayAvailable}
+                          onClick={() => handleEnroll(cls.id)}
+                        >
+                          {!isClassDayAvailable
+                            ? 'Недоступно'
+                            : enrollingId === cls.id
+                              ? 'Записуємо...'
+                              : 'Записатися'}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
               ) : (
                 <TableRow className="border-b-white/5">
                   <TableCell colSpan={5} className="py-8 text-center text-muted-foreground">
