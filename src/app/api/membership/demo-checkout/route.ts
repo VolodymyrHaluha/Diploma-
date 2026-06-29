@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { activateDemoMembership, isMembershipPlanName } from '@/lib/server/membership-repository';
 import { getSessionUserId } from '@/lib/server/session';
-
+ 
 function onlyDigits(value: unknown) {
   return String(value ?? '').replace(/\D/g, '');
 }

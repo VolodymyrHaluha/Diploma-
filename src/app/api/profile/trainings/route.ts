@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
 import { listUserTrainings } from '@/lib/server/training-repository';
-
+ 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 

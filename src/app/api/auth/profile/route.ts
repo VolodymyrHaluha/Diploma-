@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { findUserById, ProfileUpdates, toPublicUser, updateUserProfile } from '@/lib/server/users-repository';
 import { getSessionUserId } from '@/lib/server/session';
-
+ 
 function parseNumberOrNull(value: unknown) {
   if (value === null || value === '') return null;
   if (value === undefined) return undefined;

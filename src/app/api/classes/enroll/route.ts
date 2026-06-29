@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
 import { createUserTraining } from '@/lib/server/training-repository';
-
+ 
 export async function POST(request: Request) {
   try {
     const userId = await getSessionUserId();

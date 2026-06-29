@@ -5,7 +5,7 @@ import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
 import { toPublicUser, updateUserProfile } from '@/lib/server/users-repository';
 
-export const runtime = 'edge';
+export const runtime = 'node.js';
 
 const allowedTypes = new Map([
   ['image/jpeg', 'jpg'],
