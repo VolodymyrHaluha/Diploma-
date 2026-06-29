@@ -2,7 +2,7 @@ import { readFile } from 'fs/promises';
 import path from 'path';
 import { NextResponse } from 'next/server';
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 const contentTypes: Record<string, string> = {
   '.jpg': 'image/jpeg',

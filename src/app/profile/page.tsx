@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { ProfileClient } from '@/app/profile/ProfileClient';
 import { ensureDatabaseReady, getDbPool } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
