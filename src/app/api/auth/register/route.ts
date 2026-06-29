@@ -1,3 +1,5 @@
+export const runtime = 'edge';
+
 import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { createUser, toPublicUser } from '@/lib/server/users-repository';
