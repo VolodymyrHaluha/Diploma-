@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { createUser, toPublicUser } from '@/lib/server/users-repository';
 import { setAuthCookie } from '@/lib/server/session';
-
+ 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const username = typeof body?.username === 'string' ? body.username.trim() : '';

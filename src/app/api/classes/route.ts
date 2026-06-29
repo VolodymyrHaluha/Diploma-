@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { listClassSessions } from '@/lib/server/training-repository';
-
+ 
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

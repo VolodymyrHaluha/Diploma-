@@ -2,7 +2,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { ClassSchedule } from '@/components/sections/ClassSchedule';
 import { Footer } from '@/components/layout/Footer';
 import { listClassSessions } from '@/lib/server/training-repository';
-
+ 
 export const dynamic = 'force-dynamic';
 
 export default async function SchedulePage() {

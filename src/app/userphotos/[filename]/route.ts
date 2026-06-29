@@ -1,7 +1,7 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 import { NextResponse } from 'next/server';
-
+ 
 export const runtime = 'nodejs';
 
 const contentTypes: Record<string, string> = {

@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
 import { toPublicUser, updateUserProfile } from '@/lib/server/users-repository';
-
+ 
 export const runtime = 'nodejs';
 
 const allowedTypes = new Map([
