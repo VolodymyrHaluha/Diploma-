@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 import { Navbar } from '@/components/layout/Navbar';
 import { ClassSchedule } from '@/components/sections/ClassSchedule';

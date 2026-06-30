@@ -1,4 +1,4 @@
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 import { ProfileClient } from '@/app/profile/ProfileClient';
 import { ensureDatabaseReady, getDbPool } from '@/lib/server/db';
