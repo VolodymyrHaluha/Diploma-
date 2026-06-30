@@ -5,7 +5,7 @@ import { getDatabaseErrorMessage } from '@/lib/server/db';
 import { getSessionUserId } from '@/lib/server/session';
 import { toPublicUser, updateUserProfile } from '@/lib/server/users-repository';
 
-export const runtime = 'node.js';
+export const runtime = 'nodejs';
 
 const allowedTypes = new Map([
   ['image/jpeg', 'jpg'],
